@@ -31,3 +31,13 @@ func respondWithError(w http.ResponseWriter, code int, msg string) {
 		Error: msg,
 	})
 }
+
+func decondeJSON[T any](r *http.Request) (*T, error) {
+	v := new(T)
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(v)
+	if err != nil {
+		return nil, fmt.Errorf("could not decode JSON: %w", err)
+	}
+	return v, nil
+}

@@ -51,7 +51,8 @@ func main() {
 	mux.HandleFunc("/v1/healthz", handler_readiness)
 	mux.HandleFunc("/v1/err", handler_error)
 	mux.HandleFunc("POST /v1/users", apiConfig.handler_create_user)
-	mux.HandleFunc("GET /v1/users", apiConfig.handler_get_user)
+	mux.HandleFunc("GET /v1/users", apiConfig.middlewareAuth(apiConfig.handler_get_user))
+	mux.HandleFunc("POST /v1/feeds", apiConfig.middlewareAuth(apiConfig.handler_create_feed))
 
 	server := &http.Server{
 		Addr:    ":" + port,

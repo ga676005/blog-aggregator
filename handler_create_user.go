@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -11,21 +10,20 @@ import (
 	"golang.org/x/net/context"
 )
 
-type requestParam struct {
+type createUserParams struct {
 	Name string `json:"name"`
 }
 
 func (cfg *apiConfig) handler_create_user(w http.ResponseWriter, r *http.Request) {
-	decorder := json.NewDecoder(r.Body)
-	params := requestParam{}
-	err := decorder.Decode(&params)
+	reqParams, err := decondeJSON[createUserParams](r)
+
 	if err != nil {
-		fmt.Printf("handler_create_user couldn't decode params %v\n", err)
-		respondWithError(w, http.StatusInternalServerError, "couldn't create user")
+		fmt.Printf("handler_create_user decondeJSON %v\n", err)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	if params.Name == "" {
+	if reqParams.Name == "" {
 		respondWithError(w, http.StatusBadRequest, "name is not provided")
 		return
 	}
@@ -35,7 +33,7 @@ func (cfg *apiConfig) handler_create_user(w http.ResponseWriter, r *http.Request
 
 	user, err := cfg.DB.CreateUser(ctx, database.CreateUserParams{
 		ID:        uuid.New(),
-		Name:      params.Name,
+		Name:      reqParams.Name,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	})
