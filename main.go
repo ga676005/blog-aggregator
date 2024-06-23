@@ -53,6 +53,7 @@ func main() {
 	mux.HandleFunc("POST /v1/users", apiConfig.handler_create_user)
 	mux.HandleFunc("GET /v1/users", apiConfig.middlewareAuth(apiConfig.handler_get_user))
 	mux.HandleFunc("POST /v1/feeds", apiConfig.middlewareAuth(apiConfig.handler_create_feed))
+	mux.HandleFunc("GET /v1/feeds", apiConfig.getAllFeeds)
 
 	server := &http.Server{
 		Addr:    ":" + port,
