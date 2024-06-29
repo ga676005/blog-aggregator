@@ -15,7 +15,7 @@ type createUserParams struct {
 }
 
 func (cfg *apiConfig) handler_create_user(w http.ResponseWriter, r *http.Request) {
-	reqParams, err := decondeJSON[createUserParams](r)
+	reqParams, err := parseRequestJSON[createUserParams](r)
 
 	if err != nil {
 		fmt.Printf("handler_create_user decondeJSON %v\n", err)

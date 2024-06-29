@@ -32,7 +32,7 @@ func respondWithError(w http.ResponseWriter, code int, msg string) {
 	})
 }
 
-func decondeJSON[T any](r *http.Request) (*T, error) {
+func parseRequestJSON[T any](r *http.Request) (*T, error) {
 	v := new(T)
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(v)

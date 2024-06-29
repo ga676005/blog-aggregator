@@ -15,8 +15,13 @@ type createFeedParams struct {
 	Url  string `json:"url"`
 }
 
+type CreateFeedResponse struct {
+	Feed        database.Feed      `json:"feed"`
+	Feed_follow database.UsersFeed `json:"feed_follow"`
+}
+
 func (cfg *apiConfig) handler_create_feed(w http.ResponseWriter, r *http.Request, user database.User) {
-	reqParams, err := decondeJSON[createFeedParams](r)
+	reqParams, err := parseRequestJSON[createFeedParams](r)
 	if err != nil {
 		fmt.Printf("handler_create_feed decondeJSON error: %s\n", err)
 		respondWithError(w, http.StatusInternalServerError, err.Error())
@@ -39,5 +44,21 @@ func (cfg *apiConfig) handler_create_feed(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, feed)
+	feedFollow, err := cfg.DB.CreateFeedFollow(ctx, database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		UserID:    user.ID,
+		FeedID:    feed.ID,
+		CreatedAt: time.Now(),
+	})
+
+	if err != nil {
+		fmt.Printf("handler_create_feed CreateFeedFollow error: %s\n", err)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, CreateFeedResponse{
+		Feed:        feed,
+		Feed_follow: feedFollow,
+	})
 }
