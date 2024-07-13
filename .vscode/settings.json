@@ -1,0 +1,19 @@
+{
+    "rest-client.environmentVariables": {
+    "$shared": {
+        "apiVersion": "v1",
+        "defaultToken": "defaultTokenValue",
+        "commonHeader": "commonHeaderValue"
+    },
+    "development": {
+        "host": "localhost:3000",
+        "token": "devToken",
+        "featureFlag": "development"
+    },
+    "production": {
+        "host": "api.example.com",
+        "token": "prodToken",
+        "featureFlag": "production"
+    }
+}
+}

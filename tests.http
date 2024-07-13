@@ -1,0 +1,213 @@
+@baseUrl = http://localhost:8080
+@ApiKey = 163be6d75290c72f5267227a703eb5a1033bfb5af12f1bfa45b8878e076ea1b0
+
+### Create a new user
+POST {{baseUrl}}/v1/users
+Content-Type: application/json
+
+{
+  "name": "Dodo"
+}
+
+### Expected Response
+HTTP/1.1 201 Created
+Content-Type: application/json
+Date: Sun, 07 Jul 2024 12:53:19 GMT
+Content-Length: 224
+Connection: close
+
+{
+  "ID": "a688aa04-371b-457d-ac69-7d27d4525444",
+  "CreatedAt": "2024-07-07T20:53:19.722751Z",
+  "UpdatedAt": "2024-07-07T20:53:19.722751Z",
+  "Name": "Gohomewho",
+  "ApiKey": "0ab2667db0548f1a70ea5e0521841776d3a2333f7f1bb2470d264b6658ddeec7"
+}
+
+### User 2
+HTTP/1.1 201 Created
+Content-Type: application/json
+Date: Sun, 07 Jul 2024 14:08:04 GMT
+Content-Length: 219
+Connection: close
+
+{
+  "ID": "05ee9d55-4c52-455a-b1eb-9d1fd1b2b046",
+  "CreatedAt": "2024-07-07T22:08:04.489195Z",
+  "UpdatedAt": "2024-07-07T22:08:04.489195Z",
+  "Name": "Dodo",
+  "ApiKey": "163be6d75290c72f5267227a703eb5a1033bfb5af12f1bfa45b8878e076ea1b0"
+}
+
+
+
+
+
+
+### Retrieve user details by API key
+GET {{baseUrl}}/v1/users
+Authorization: ApiKey {{ApiKey}}
+
+### Expected Response
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Sun, 07 Jul 2024 12:57:40 GMT
+Content-Length: 224
+Connection: close
+
+{
+  "ID": "a688aa04-371b-457d-ac69-7d27d4525444",
+  "CreatedAt": "2024-07-07T20:53:19.722751Z",
+  "UpdatedAt": "2024-07-07T20:53:19.722751Z",
+  "Name": "Gohomewho",
+  "ApiKey": "0ab2667db0548f1a70ea5e0521841776d3a2333f7f1bb2470d264b6658ddeec7"
+}
+
+
+
+
+
+
+
+
+### Create a new feed
+POST {{baseUrl}}/v1/feeds
+Authorization: ApiKey {{ApiKey}}
+Content-Type: application/json
+
+{
+  "name": "The Dodo Blog",
+  "url": "https://do.do/index.xml"
+}
+
+### Expected Response
+HTTP/1.1 201 Created
+Content-Type: application/json
+Date: Sun, 07 Jul 2024 13:18:26 GMT
+Content-Length: 451
+Connection: close
+
+{
+  "feed": {
+    "ID": "3964033f-cd4f-4039-82db-f6c6498c67c3",
+    "CreatedAt": "2024-07-07T21:18:26.851237Z",
+    "UpdatedAt": "2024-07-07T21:18:26.851237Z",
+    "Name": "The Boot.dev Blog",
+    "Url": "https://blog.boot.dev/index.xml",
+    "UserID": "a688aa04-371b-457d-ac69-7d27d4525444"
+  },
+  "feed_follow": {
+    "ID": "3a9ab70f-30e9-49ca-a160-a492be2ef6b4",
+    "UserID": "a688aa04-371b-457d-ac69-7d27d4525444",
+    "FeedID": "3964033f-cd4f-4039-82db-f6c6498c67c3",
+    "CreatedAt": "2024-07-07T21:18:26.937439Z"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+### Get all feeds
+GET {{baseUrl}}/v1/feeds
+
+### Expected Response
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Sun, 07 Jul 2024 13:21:16 GMT
+Content-Length: 246
+Connection: close
+
+[
+  {
+    "ID": "3964033f-cd4f-4039-82db-f6c6498c67c3",
+    "CreatedAt": "2024-07-07T21:18:26.851237Z",
+    "UpdatedAt": "2024-07-07T21:18:26.851237Z",
+    "Name": "The Boot.dev Blog",
+    "Url": "https://blog.boot.dev/index.xml",
+    "UserID": "a688aa04-371b-457d-ac69-7d27d4525444"
+  },
+  {
+    "ID": "1a9e5542-0f57-434a-9752-11f6e8736951",
+    "CreatedAt": "2024-07-07T22:09:19.90739Z",
+    "UpdatedAt": "2024-07-07T22:09:19.90739Z",
+    "Name": "The Dodo Blog",
+    "Url": "https://do.do/index.xml",
+    "UserID": "05ee9d55-4c52-455a-b1eb-9d1fd1b2b046"
+  }
+]
+
+
+
+
+
+
+
+
+
+
+
+### Create a new feed follow
+POST {{baseUrl}}/v1/feed_follows
+Authorization: ApiKey {{ApiKey}}
+Content-Type: application/json
+
+{
+  "feed_id": "3964033f-cd4f-4039-82db-f6c6498c67c3"
+}
+
+### Expected Response
+HTTP/1.1 201 Created
+Content-Type: application/json
+Date: Sun, 07 Jul 2024 14:10:25 GMT
+Content-Length: 183
+Connection: close
+
+{
+  "ID": "0e87fd4d-ad2e-4350-836c-4b03be83ddb9",
+  "UserID": "05ee9d55-4c52-455a-b1eb-9d1fd1b2b046",
+  "FeedID": "3964033f-cd4f-4039-82db-f6c6498c67c3",
+  "CreatedAt": "2024-07-07T22:10:25.188178Z"
+}
+
+
+
+
+
+
+
+
+
+
+### Delete a feed follow
+@feedFollowID = 0e87fd4d-ad2e-4350-836c-4b03be83ddb9
+
+DELETE {{baseUrl}}/v1/feed_follows/{{feedFollowID}}
+Authorization: ApiKey {{ApiKey}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Get user feed follow
+GET {{baseUrl}}/v1/feed_follows
+Authorization: ApiKey {{ApiKey}}
