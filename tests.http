@@ -75,35 +75,43 @@ POST {{baseUrl}}/v1/feeds
 Authorization: ApiKey {{ApiKey}}
 Content-Type: application/json
 
+# {
+#   "name": "boot.dev",
+#   "url": "https://blog.boot.dev/index.xml"
+# }
+
 {
-  "name": "The Dodo Blog",
-  "url": "https://do.do/index.xml"
+  "name": "wagslane.dev",
+  "url": "https://wagslane.dev/index.xml"
 }
 
 ### Expected Response
 HTTP/1.1 201 Created
 Content-Type: application/json
-Date: Sun, 07 Jul 2024 13:18:26 GMT
-Content-Length: 451
+Date: Sat, 13 Jul 2024 10:42:10 GMT
+Content-Length: 506
 Connection: close
 
 {
   "feed": {
-    "ID": "3964033f-cd4f-4039-82db-f6c6498c67c3",
-    "CreatedAt": "2024-07-07T21:18:26.851237Z",
-    "UpdatedAt": "2024-07-07T21:18:26.851237Z",
-    "Name": "The Boot.dev Blog",
-    "Url": "https://blog.boot.dev/index.xml",
-    "UserID": "a688aa04-371b-457d-ac69-7d27d4525444"
+    "ID": "4e9c20bc-db04-402b-baa6-3bb3af98e11d",
+    "CreatedAt": "2024-07-13T18:42:10.916439Z",
+    "UpdatedAt": "2024-07-13T18:42:10.916439Z",
+    "Name": "wagslane.dev",
+    "Url": "https://wagslane.dev/index.xml",
+    "UserID": "05ee9d55-4c52-455a-b1eb-9d1fd1b2b046",
+    "LastFetchedAt": {
+      "Time": "0001-01-01T00:00:00Z",
+      "Valid": false
+    }
   },
   "feed_follow": {
-    "ID": "3a9ab70f-30e9-49ca-a160-a492be2ef6b4",
-    "UserID": "a688aa04-371b-457d-ac69-7d27d4525444",
-    "FeedID": "3964033f-cd4f-4039-82db-f6c6498c67c3",
-    "CreatedAt": "2024-07-07T21:18:26.937439Z"
+    "ID": "6a2d21d0-6018-48c2-8ab0-ae449ab62935",
+    "UserID": "05ee9d55-4c52-455a-b1eb-9d1fd1b2b046",
+    "FeedID": "4e9c20bc-db04-402b-baa6-3bb3af98e11d",
+    "CreatedAt": "2024-07-13T18:42:10.92341Z"
   }
 }
-
 
 
 
@@ -211,3 +219,17 @@ Authorization: ApiKey {{ApiKey}}
 ### Get user feed follow
 GET {{baseUrl}}/v1/feed_follows
 Authorization: ApiKey {{ApiKey}}
+
+### Expected Response
+[
+  {
+    "FeedID": "1a9e5542-0f57-434a-9752-11f6e8736951",
+    "FeedCreatedAt": "2024-07-07T22:09:19.90739Z",
+    "FeedUpdatedAt": "2024-07-07T22:09:19.90739Z",
+    "FeedName": "The Dodo Blog",
+    "FeedUrl": "https://do.do/index.xml",
+    "FeedUserID": "05ee9d55-4c52-455a-b1eb-9d1fd1b2b046",
+    "FeedFollowID": "d1727861-ead5-49a9-adc3-f241c6d847fc",
+    "FeedFollowAt": "2024-07-07T22:09:19.926278Z"
+  }
+]

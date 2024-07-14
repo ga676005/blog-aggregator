@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/ga676005/blog-aggregator/internal/database"
 	"github.com/joho/godotenv"
@@ -37,9 +38,12 @@ func main() {
 	}
 
 	dbQueries := database.New(db)
-	apiConfig := apiConfig{
+	cfg := apiConfig{
 		DB: dbQueries,
 	}
+
+	feedWorker := NewFeedWorker(time.Minute, 10, cfg.getNextFeedsToFetch)
+	go feedWorker.Start()
 
 	mux := http.NewServeMux()
 
@@ -50,15 +54,15 @@ func main() {
 
 	mux.HandleFunc("/v1/healthz", handler_readiness)
 	mux.HandleFunc("/v1/err", handler_error)
-	mux.HandleFunc("POST /v1/users", apiConfig.handler_create_user)
-	mux.HandleFunc("GET /v1/users", apiConfig.middlewareAuth(apiConfig.handler_get_user))
+	mux.HandleFunc("POST /v1/users", cfg.handler_create_user)
+	mux.HandleFunc("GET /v1/users", cfg.middlewareAuth(cfg.handler_get_user))
 
-	mux.HandleFunc("POST /v1/feeds", apiConfig.middlewareAuth(apiConfig.handler_create_feed))
-	mux.HandleFunc("GET /v1/feeds", apiConfig.getAllFeeds)
+	mux.HandleFunc("POST /v1/feeds", cfg.middlewareAuth(cfg.handler_create_feed))
+	mux.HandleFunc("GET /v1/feeds", cfg.getAllFeeds)
 
-	mux.HandleFunc("POST /v1/feed_follows", apiConfig.middlewareAuth(apiConfig.handlerPostUserFollowFeed))
-	mux.HandleFunc("DELETE /v1/feed_follows/{feedFollowID}", apiConfig.middlewareAuth(apiConfig.handlerDeleteUserFollowFeed))
-	mux.HandleFunc("GET /v1/feed_follows", apiConfig.middlewareAuth(apiConfig.handlerGetUserFollowFeed))
+	mux.HandleFunc("POST /v1/feed_follows", cfg.middlewareAuth(cfg.handlerPostUserFollowFeed))
+	mux.HandleFunc("DELETE /v1/feed_follows/{feedFollowID}", cfg.middlewareAuth(cfg.handlerDeleteUserFollowFeed))
+	mux.HandleFunc("GET /v1/feed_follows", cfg.middlewareAuth(cfg.handlerGetUserFollowFeed))
 
 	server := &http.Server{
 		Addr:    ":" + port,
