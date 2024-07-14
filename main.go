@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/ga676005/blog-aggregator/internal/database"
 	"github.com/joho/godotenv"
@@ -42,8 +41,8 @@ func main() {
 		DB: dbQueries,
 	}
 
-	feedWorker := NewFeedWorker(time.Minute, 10, cfg.getNextFeedsToFetch)
-	go feedWorker.Start()
+	// feedWorker := NewFeedWorker(time.Minute, 10, &cfg)
+	// go feedWorker.Start()
 
 	mux := http.NewServeMux()
 
@@ -63,6 +62,8 @@ func main() {
 	mux.HandleFunc("POST /v1/feed_follows", cfg.middlewareAuth(cfg.handlerPostUserFollowFeed))
 	mux.HandleFunc("DELETE /v1/feed_follows/{feedFollowID}", cfg.middlewareAuth(cfg.handlerDeleteUserFollowFeed))
 	mux.HandleFunc("GET /v1/feed_follows", cfg.middlewareAuth(cfg.handlerGetUserFollowFeed))
+
+	mux.HandleFunc("GET /v1/posts", cfg.middlewareAuth(cfg.handlerGetPostsByUser))
 
 	server := &http.Server{
 		Addr:    ":" + port,

@@ -216,6 +216,11 @@ Authorization: ApiKey {{ApiKey}}
 
 
 
+
+
+
+
+
 ### Get user feed follow
 GET {{baseUrl}}/v1/feed_follows
 Authorization: ApiKey {{ApiKey}}
@@ -232,4 +237,45 @@ Authorization: ApiKey {{ApiKey}}
     "FeedFollowID": "d1727861-ead5-49a9-adc3-f241c6d847fc",
     "FeedFollowAt": "2024-07-07T22:09:19.926278Z"
   }
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Get posts for user
+GET {{baseUrl}}/v1/posts
+Authorization: ApiKey {{ApiKey}}
+
+### Expected Response
+[
+  {
+    "ID": "3699d5c1-c545-49bc-aa16-40f0eb10123a",
+    "CreatedAt": "2024-07-14T10:22:05.196247Z",
+    "UpdatedAt": "2024-07-14T10:22:05.196248Z",
+    "Title": "The Boot.dev Beat. July 2024",
+    "Url": "https://blog.boot.dev/news/bootdev-beat-2024-07/",
+    "Description": "One million lessons. Well, to be precise, you have all completed 1,122,050 lessons just in June.",
+    "PublishedAt": "2024-07-10T00:00:00Z",
+    "FeedID": "4e4f737e-020e-48a7-849e-8ae0a3622ea6"
+  },
+  {
+    "ID": "8372cf34-7e17-46bd-8973-3d0477282183",
+    "CreatedAt": "2024-07-14T10:22:05.198536Z",
+    "UpdatedAt": "2024-07-14T10:22:05.198536Z",
+    "Title": "The Boot.dev Beat. June 2024",
+    "Url": "https://blog.boot.dev/news/bootdev-beat-2024-06/",
+    "Description": "ThePrimeagen\u0026rsquo;s new Git course is live. A new boss battle is on the horizon, and we\u0026rsquo;ve made massive speed improvements to the site.",
+    "PublishedAt": "2024-06-05T00:00:00Z",
+    "FeedID": "4e4f737e-020e-48a7-849e-8ae0a3622ea6"
+  },
 ]

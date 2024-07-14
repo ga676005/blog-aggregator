@@ -3,12 +3,16 @@ package main
 import (
 	"context"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/ga676005/blog-aggregator/internal/database"
+	"github.com/google/uuid"
 )
 
 // RSS represents the structure of an RSS feed
@@ -36,9 +40,9 @@ type Item struct {
 }
 
 type FeedWorker struct {
-	interval            time.Duration
-	batchSize           int
-	getNextFeedsToFetch func(int32) ([]Feed, error) // 用 int32 是因為 sqlc 產生的 function 用 int32
+	interval  time.Duration
+	batchSize int
+	cfg       *apiConfig
 }
 
 func fetchRSS(url string) (RSS, error) {
@@ -77,14 +81,12 @@ func fetchRSS(url string) (RSS, error) {
 func NewFeedWorker(
 	interval time.Duration,
 	batchSize int,
-	getNextFeedsToFetch func(int32) ([]Feed, error),
+	cfg *apiConfig,
 ) *FeedWorker {
 	return &FeedWorker{
 		interval:  interval,
 		batchSize: batchSize,
-		getNextFeedsToFetch: func(batchSize int32) ([]Feed, error) {
-			return getNextFeedsToFetch(batchSize)
-		},
+		cfg:       cfg,
 	}
 }
 
@@ -102,7 +104,7 @@ func (w *FeedWorker) Start() {
 
 func (w *FeedWorker) processBatch() {
 	log.Printf("Processing batch of up to %d feeds\n", w.batchSize)
-	feeds, err := w.getNextFeedsToFetch(int32(w.batchSize))
+	feeds, err := w.cfg.getNextFeedsToFetch(int32(w.batchSize))
 	if err != nil {
 		log.Println("processBatch", err)
 		return
@@ -144,7 +146,46 @@ func (w *FeedWorker) processFeed(feed Feed) {
 		return
 	}
 
+	ctx := context.Background()
 	for _, item := range res.Channel.Items {
-		log.Printf("%s - %s\n", res.Channel.Title, item.Title)
+		pubDate, err := parseRSSDateFormat(item.PubDate)
+		if err != nil {
+			log.Printf("cannot parse pubDate %v of item %v \n", item.PubDate, item.Title)
+			continue
+		}
+		err = w.cfg.DB.CreatePost(ctx, database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+			Title:       item.Title,
+			Url:         item.Link,
+			Description: item.Description,
+			PublishedAt: pubDate,
+			FeedID:      feed.ID,
+		})
+
+		if err != nil {
+			log.Printf("failed CreatePost %#v", item)
+		}
 	}
+}
+
+var rssDateFormats = []string{
+	time.RFC822,
+	time.RFC822Z,
+	time.RFC850,
+	time.RFC1123,
+	time.RFC1123Z,
+	time.RFC3339,
+	"2006-01-02T15:04:05Z07:00", // another common variant
+}
+
+func parseRSSDateFormat(pubDate string) (time.Time, error) {
+	for _, v := range rssDateFormats {
+		t, err := time.Parse(v, pubDate)
+		if err == nil {
+			return t, nil
+		}
+	}
+	return time.Time{}, errors.New("unable to parse data: " + pubDate)
 }
