@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/ga676005/blog-aggregator/internal/database"
 	"github.com/joho/godotenv"
@@ -41,8 +42,8 @@ func main() {
 		DB: dbQueries,
 	}
 
-	// feedWorker := NewFeedWorker(time.Minute, 10, &cfg)
-	// go feedWorker.Start()
+	feedWorker := NewFeedWorker(time.Minute, 10, &cfg)
+	go feedWorker.Start()
 
 	mux := http.NewServeMux()
 
