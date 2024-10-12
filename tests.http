@@ -1,6 +1,9 @@
 @baseUrl = http://localhost:8080
 @ApiKey = 163be6d75290c72f5267227a703eb5a1033bfb5af12f1bfa45b8878e076ea1b0
 
+
+GET {{baseUrl}}/v1/healthz
+
 ### Create a new user
 POST {{baseUrl}}/v1/users
 Content-Type: application/json

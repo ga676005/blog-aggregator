@@ -1,0 +1,34 @@
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: ./postgres/Dockerfile
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: blogator
+    networks:
+      - blog-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    entrypoint: ["docker-entrypoint.sh", "postgres"]
+    user: postgres
+
+  
+  blog-aggregator:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - blog-network
+    depends_on:
+      - postgres
+  
+networks:
+  blog-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
